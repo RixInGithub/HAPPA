@@ -1,0 +1,158 @@
+---- Intro to HAPPA ----
+HAPPA is a 2D esolang. (aka "esoteric/joke (programming) language")
+
+Ahead of this point, these specs are going to mark HAPPA code like this:
+
+####
+... code goes here...
+####
+
+--- Glossary ---
+HAPPA stands for "Heinous Awful Programming Project for All".
+
+HAPPA works with a "buggy" that by default goes down every time a new command has to be executed.
+
+When a buggy "bumps into a character", that means the buggy is on the same exact position as the character mentioned.
+When a buggy bumps into a character that ISN'T a command EXCEPT the " " space character, the buggy crashes and the program ends with an error stating "Move that <char> out of the way!". So I guess be extra protective with your comments?
+When a buggy goes out of bounds of the program (that is, the buggy went beyond the program's bounding box) the program also ends, but with a different error of "Wheeeeh!".
+
+---- Commands ----
+
+The buggy starts with a "h" to go left, and a "H" to go right.
+Keep in mind, a bumper is made from the first occurence of "h" or "H", whichever is first.
+If the code has no bumper, the interpreter should just perform a "while (true) {/* do nothing */}" loop.
+
+Why does uppercase make everything go right? Cuz you have to Shift to be right! Terrible pun, I know.
+
+Here's sample code that automatically makes the buggy go left, then right, then force the buggy to "crash" with a hashtag:
+
+####
+  h
+   
+|  
+   
+  #
+####
+
+When the buggy bumps into a "|", the buggy flips it's horizontal position.
+When the buggy bumps into a "-", then it flips it's vertical position.
+
+Here's a demonstration of a buggy going right, bouncing up, then crashing with a yet another hashtag:
+
+####
+-------#
+H       
+------  
+####
+
+In one "execution cycle" the buggy changes it's horizontal position and vertical position accordingly to it's current face, both at once.
+
+For example, something like this...
+####
+H 
+ #
+####
+Makes the buggy go right-down once, then crash as a result.
+
+When the buggy bumps into a "/" or a "?", the program pauses to get a single character from stdin. If the input is a valid ASCII character within the (inclusive) range 32..126 (" ".."~"), the buggy bounces left if the character is "/", and right if the character is "?". If the character isn't within the range, the buggy goes right if the character bumped into was "/", and vice versa if it was "?".
+When the "/" or "?" character succeeds, it also adds the character as a string onto a stack. Only characters can be added onto a stack, and these characters only come from stdin.
+
+There's also a way of printing characters! When the buggy bumps into a "~", the program looks for a character left and right, prioritizing right first. If a character is found at a side, the buggy gets it's current horizontal position flipped, sort of like a "|".
+
+####
+H   
+    
+ 1~2
+    
+#   
+####
+
+The buggy bumps into a "~" which WILL ALWAYS PRINT OUT "2". If you map out the buggy's position after each momvement of the buggy, the buggy won't crash into either "1" or "2"
+There's also a "!" which will print out the latest character from the stack and will also mirror only specifically the buggy's HORIZONTAL position.
+
+There's also a "`" that prioritizes left instead of right, so if we run this:
+
+####
+H   
+    
+ 1`2
+    
+#   
+####
+
+The code will print out "1"!
+
+There's a "=" character that will add two latest characters and deletes them both, then pushes the result to the end of the stack.
+There's also a "-" character that does the same but subtracts.
+
+There's also "+" that multiplies, and a "_" that divides ("_" floors the result)
+
+The "=" (addition), "-" (subtraction), "+" (multiplication) and "_" (floored division) characters invert the buggy's horizontal movement like a "|"
+
+####
+H
+  
+  ?  
+ # ? 
+  # =
+   ! 
+  #  
+####
+
+This code asks the user for two characters, adds their ASCII values, then prints a new character out. Note that the result from the operators wrap around the inclusive range 0..255 ("␀"-"␡"), so they are useful for having characters outside of the usual 32..126 (" ".."~")
+
+There's also a "@" character that adds 1 to the latest stack item, and a "2" that subtracts 1 from the latest item, and they also act as the "|" character.
+
+####
+H
+  
+  ?
+ # @
+  @ 
+   @ #
+  @ !
+   -
+####
+
+This code asks the user for a character, adds four to the character, and prints the new character out. The thing to notice is that I used the vertical mirror "-" character which makes the printing and crashing/exiting work.
+
+####
+  d
+   -
+  h   c
+ |   |
+a    
+   -
+    b
+####
+
+This code should make an infinite loop, if it wasn't for the fact that the mirror characters "|"/"-" can only be used 20 times. This is done by assigning a counter to each of the mirrors.
+
+---- List of Commands ----
+
+H: ...................................... Starts the buggy, facing it right-down
+h: ....................................... Starts the buggy, facing it left-down
+|: .......... Mirrors the buggy's horizontal position, left-right and right-left
+-: .................. Mirrors the buggy's vertical position, up-down and down-up
+/: .. Gets a character from stdin, and if it's within a human-readable character
+    range, the buggy faces left and the character is added to a stack, otherwise
+                                                                  it faces right
+?: ............................................ Same as "/", but flipped results
+`: .. Tries to find a character from left off the buggy and right off the buggy,
+                              prioritizing left first, then prints the character
+~: ................................ Same as "`", except prioritizing right first
+!: ................... Acts like "|", but prints out last character on the stack
+=: .... Acts like "|", but also adds two last characters together, pops the last
+     two characters, then adds the addition result to the stack; the last result
+        is used first, then the second last is used last (this applies for every
+                                                                  other operand)
+-: ... Same as "=", but subtracts instead; if the result is negative, the result
+                                  becomes 255+result until result isn't negative
++: ......................................... Same as "=", but multiplies instead
+_: ....................... Same as "=", but performs an integer division instead
+@: ................ Acts like "|", but also adds 1 to the last item of the stack
+2: .............................. Same as "@", but subtracts 1 instead of adding
+
+NOTE: The " " space character is a no-op and will not change the buggy's facing. (i.e., a do-nothing command)
+
+Any other character that isn't on this will make the buggy crash, as earlier mentioned.
