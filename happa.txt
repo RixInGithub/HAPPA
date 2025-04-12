@@ -9,6 +9,7 @@ Ahead of this point, these specs are going to mark HAPPA code like this:
 
 --- Glossary ---
 HAPPA stands for "Heinous Awful Programming Project for All".
+HAPPA files have a file extension of .HPA. (case insensitive)
 
 HAPPA works with a "buggy" that by default goes down every time a new command has to be executed.
 
@@ -156,3 +157,6 @@ _: ....................... Same as "=", but performs an integer division instead
 NOTE: The " " space character is a no-op and will not change the buggy's facing. (i.e., a do-nothing command)
 
 Any other character that isn't on this will make the buggy crash, as earlier mentioned.
+
+For more information on what ASCII tables to use, take a peek at "happa.lua" in the "internalASCII" and "ascii" variables.
+Those tables are standards for this esolang so you better not do it some other way cuz that's nonstandard and all...
